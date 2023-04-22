@@ -1,0 +1,6 @@
+﻿  Graph.cpp
+C:\Users\Dell\Desktop\Waslny\Waslny\Graph.cpp(19,52): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Dell\Desktop\Waslny\Waslny\Graph.cpp(48,52): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Source.cpp
+  Generating Code...
+  Waslny.vcxproj -> C:\Users\Dell\Desktop\Waslny\x64\Debug\Waslny.exe

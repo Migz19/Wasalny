@@ -1,0 +1,8 @@
+﻿  Graph.cpp
+C:\Users\Dell\Desktop\Waslny\Waslny\Graph.cpp(90,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Dell\Desktop\Waslny\Waslny\Graph.cpp(92,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Dell\Desktop\Waslny\Waslny\Graph.cpp(115,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Dell\Desktop\Waslny\Waslny\Graph.cpp(117,21): warning C4018: '<': signed/unsigned mismatch
+  Source.cpp
+  Generating Code...
+  Waslny.vcxproj -> C:\Users\Dell\Desktop\Waslny\Debug\Waslny.exe
