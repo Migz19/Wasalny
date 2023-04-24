@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <string>
 #include "GraphException.h"
+#include "NodeMapper.h"
+#include "EdgeMapper.h"
 
 using namespace std;
 
@@ -15,34 +17,37 @@ private:
 
 	int sizeOfList;
 	vector< vector<pair<int, int>> > adjList;
-	
-	vector<int> freeNodeMappingIds;
-	int maxNodeMappingId;
-	unordered_map<string, int> nodeMapper;   // NodeString -> NodeId
 
-	vector<int> edgeMappingResults;
-	int maxEdgeMappingId;
-	unordered_map<string, int> edgeMapper; // EdgeString -> EdgeId
-	unordered_map<int, int> edgeDistance;  // EdgeId -> EdgeDis
+	NodeMapper nodeMapper;
+	EdgeMapper edgeMapper;
 
-	bool NodeExists(string node);
-	bool EdgeExists(string edge);
+	Graph();
 
-	//bool vis[500]; 
+	void addDirectedEdgeHelper(string from, string to, string edgeName, int distance);
+	pair<bool, string> canAddEdge(string from, string to, string edgeName, int distance);
+
+	bool nodeExists(string node);
+	bool edgeExists(string edge);
+
+	//bool vis[500];
+
 public:
 
-    Graph();
-	void addNode(string node); 
+	Graph(const Graph& graph) = delete;
+	static Graph* getInstance();
 
-	void addUnDirectedEdge(string from, string to, string edgeName, int distance); 
-	void addDirectedEdge(string from, string to, string edgeName, int distance); 
-
+	void addNode(string node);
 	void removeNode(string node);
-	void removeEdge(string node1, string node2, string edgeName); 
+
+	void addUnDirectedEdge(string from, string to, string edgeName, int distance);
+	void addDirectedEdge(string from, string to, string edgeName, int distance);
+	void removeEdge(string node1, string node2, string edgeName);
+
 	int getDistance(int edgeId);
+
 	//void test(int n);
 	~Graph();
 
-	
+
 };
 

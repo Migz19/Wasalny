@@ -1,117 +1,100 @@
 #include "Graph.h"
 
+static Graph* instancePtr = NULL;
+
 Graph::Graph()
 {
 	sizeOfList = 100;
 	adjList.resize(sizeOfList);
+}
 
-	maxNodeMappingId = 1;
-	maxEdgeMappingId = 1;
+Graph* Graph::getInstance()
+{
+	if (instancePtr == NULL)
+		instancePtr = new Graph;
+
+	return instancePtr;
 }
 
 void Graph::addNode(string node)
 {
-	if (NodeExists(node))
+	if (nodeExists(node))
 		throw GraphException("Node already exists");
 
-	if (!freeNodeMappingIds.empty())  // when a node is removed its Id can be reused so the all the ids of deleted nodes are stored in freeNodeMappingIds
-	{
-		int lastAvailable = freeNodeMappingIds.size() - 1;
-		nodeMapper[node] = freeNodeMappingIds[lastAvailable];
-		freeNodeMappingIds.pop_back();
-	}
-	else
-	{
-		nodeMapper[node] = maxNodeMappingId++;
-	}
+	int id = nodeMapper.getId(node);
 
-	if (maxNodeMappingId == adjList.size())
+	if (id == adjList.size())
 		adjList.resize(adjList.size() * 2);
-
-
-}
-
-void Graph::addDirectedEdge(string from, string to, string edgeName ,int distance)
-{
-	if (!NodeExists(from) || !NodeExists(to))
-		throw GraphException("Node doesn't exist");
-	else if (EdgeExists(edgeName))
-		throw GraphException("Edge already exists");
-	else if(distance <= 0)
-		throw GraphException("Invalid distance");
-
-	int node1 = nodeMapper[from];
-	int node2 = nodeMapper[to];
-	
-	if (!edgeMappingResults.empty())  // when an edge is removed its Id can be reused so the all the ids of deleted edges are stored in edgeMappingResults
-	{
-		int lastAvailable = edgeMappingResults.size() - 1;
-		edgeMapper[edgeName] = edgeMappingResults[lastAvailable];
-		edgeMappingResults.pop_back();
-	}
-	else
-	{
-		edgeMapper[edgeName] = maxEdgeMappingId++;
-	}
-
-	int currEdgeId = edgeMapper[edgeName];
-	edgeDistance[currEdgeId] = distance;
-	adjList[node1].push_back({ node2, currEdgeId });
-
-}
-
-void Graph::addUnDirectedEdge(string from, string to, string edgeName, int distance)
-{
-	if (!NodeExists(from) || !NodeExists(to))
-		throw GraphException("Node doesn't exist");
-	else if (EdgeExists(edgeName))
-		throw GraphException("Edge already exists");
-	else if (distance <= 0)
-		throw GraphException("Invalid distance");
-
-	addDirectedEdge(from, to, edgeName,distance);
-
-	int node1 = nodeMapper[to];
-	int node2 = nodeMapper[from];
-	int currEdgeId = edgeMapper[edgeName];
-	adjList[node1].push_back({ node2, currEdgeId });
 
 }
 
 void Graph::removeNode(string node)
 {
-	if(!NodeExists(node))
+	if (!nodeExists(node))
 		throw GraphException("Node doesn't exist");
-
-	int targetNode = nodeMapper[node];
-	adjList[targetNode].clear();
-	freeNodeMappingIds.push_back(targetNode);
-
-	for (int i = 0; i < adjList.size(); i++)
-	{
-		for (int j = 0; j < adjList[i].size(); j++)
+		
+		int targetNode = nodeMapper.getId(node);
+		for (int i = 0; i < adjList[targetNode].size(); i++)
 		{
-			int currNode = adjList[i][j].first;
-
-			if(currNode == targetNode)
-				adjList[i].erase(adjList[i].begin() + j);
+			int connectingEdge = adjList[targetNode][i].second;
+			if (edgeMapper.idExists(connectingEdge))
+				edgeMapper.remove(connectingEdge);
 		}
-	}
 
-	nodeMapper.erase(node);
+		adjList[targetNode].clear();
+		
+		for (int i = 0; i < adjList.size(); i++)
+		{
+			for (int j = 0; j < adjList[i].size(); j++)
+			{
+				int currNode = adjList[i][j].first;
+				int connectingEdge = adjList[i][j].second;
+				if (currNode == targetNode)
+				{
+					if (edgeMapper.idExists(connectingEdge))
+						edgeMapper.remove(connectingEdge);
+					adjList[i].erase(adjList[i].begin() + j);
+				}
+			}
+		}
+		
+		nodeMapper.remove(targetNode);
+}
+
+void Graph::addUnDirectedEdge(string from, string to, string edgeName, int distance)
+{
+	pair<bool, string> canAdd = canAddEdge(from, to, edgeName, distance);
+
+	if (!canAdd.first)
+		throw GraphException(canAdd.second);
+
+	addDirectedEdgeHelper(from, to, edgeName, distance);
+	addDirectedEdgeHelper(to, from, edgeName, distance);
+
+}
+
+void Graph::addDirectedEdge(string from, string to, string edgeName, int distance)
+{
+	pair<bool, string> canAdd = canAddEdge(from, to, edgeName, distance);
+
+	if (!canAdd.first)
+		throw GraphException(canAdd.second);
+
+	addDirectedEdgeHelper(from, to, edgeName, distance);
+	
 }
 
 void Graph::removeEdge(string node1, string node2, string edgeName)
 {
-	
-	if (!NodeExists(node1) || !NodeExists(node2))
+		
+	if (!nodeExists(node1) || !nodeExists(node2))
 		throw GraphException("Node doesn't exist");
-	else if (!EdgeExists(edgeName))
+	else if (!edgeExists(edgeName))
 		throw GraphException("Edge doesn't exist");
 
 	int counter = 0;
-	int targetNode1 = nodeMapper[node1], targetNode2 = nodeMapper[node2];
-	int edgeId = edgeMapper[edgeName];
+	int targetNode1 = nodeMapper.getId(node1), targetNode2 = nodeMapper.getId(node2);
+	int edgeId = edgeMapper.getId(edgeName, -1);  // -1 doesn't affect anything (edge already exists)
 
 	for (int i = 0; i < adjList.size(); i++)
 	{
@@ -128,8 +111,7 @@ void Graph::removeEdge(string node1, string node2, string edgeName)
 
 			if (counter == 2) // if cnt == 2 then i removed the edge so no need to continue looping
 			{
-				edgeMappingResults.push_back(edgeId);
-				edgeMapper.erase(edgeName);
+				edgeMapper.remove(edgeId);
 				return;
 
 			}
@@ -137,37 +119,65 @@ void Graph::removeEdge(string node1, string node2, string edgeName)
 
 	}
 
-	if (!counter)
-	{
+	if (!counter) // if nodes and edge exist but the edge doesn't connect those two
 		throw GraphException("Edge doesn't exist");
-	}
 	else
+		edgeMapper.remove(edgeId);
+}
+
+int Graph::getDistance(int edgeId)
+{
+	return edgeMapper.getDistance(edgeId);
+}
+
+void Graph::addDirectedEdgeHelper(string from, string to, string edgeName, int distance)
+{
+	int node1 = nodeMapper.getId(from);
+	int node2 = nodeMapper.getId(to);
+
+	int currEdgeId = edgeMapper.getId(edgeName, distance);
+	adjList[node1].push_back({ node2, currEdgeId });
+}
+
+pair<bool, string> Graph::canAddEdge(string from, string to, string edgeName, int distance)
+{
+	bool flag = 1;
+	string message = "No errors";
+
+	if (!nodeExists(from) || !nodeExists(to))
 	{
-		edgeMapper.erase(edgeName);
-		edgeMappingResults.push_back(edgeId);
+		flag = 0;
+		message = "Node doesn't exist";
+	}
+	else if (edgeExists(edgeName))
+	{
+		flag = 0;
+		message = "Edge already exists";
+	}
+	else if (distance <= 0)
+	{
+		flag = 0;
+		message = "Invalid distance";
 
 	}
+
+	return { flag, message };
 }
 
-bool Graph::NodeExists(string node)
+bool Graph::nodeExists(string node)
 {
-	return nodeMapper.find(node) != nodeMapper.end();
+	return nodeMapper.nameExists(node);
 }
 
-bool Graph::EdgeExists(string edge)
+bool Graph::edgeExists(string edge)
 {
-	return edgeMapper.find(edge) != edgeMapper.end();
-}
-
-int Graph::getDistance(int edgeID)
-{
-	return edgeDistance[edgeID];
+	return edgeMapper.nameExists(edge);
 }
 
 //void Graph::test(int n)
 //{
 //	vis[n] = 1;
-//	cout << n << " ";
+//	cout << nodeMapper.getName(n) << " ";
 //	for (auto i : adjList[n])
 //	{
 //		if (!vis[i.first])
@@ -178,13 +188,5 @@ int Graph::getDistance(int edgeID)
 Graph::~Graph()
 {
 	sizeOfList = 0;
-	maxNodeMappingId = 0;
-	maxEdgeMappingId = 0;
 	adjList.clear();
-	freeNodeMappingIds.clear();
-    nodeMapper.clear();
-	edgeMappingResults.clear();
-	edgeMapper.clear();
-	edgeDistance.clear();
 }
-
