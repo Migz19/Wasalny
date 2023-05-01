@@ -28,6 +28,11 @@ void Graph::addNode(string node)
 
 }
 
+int Graph::getMaxNode()
+{
+	return adjList.size();
+}	
+
 void Graph::removeNode(string node)
 {
 	if (!nodeExists(node))
@@ -189,4 +194,6 @@ Graph::~Graph()
 {
 	sizeOfList = 0;
 	adjList.clear();
+	if(instancePtr != nullptr)
+		delete instancePtr;
 }
