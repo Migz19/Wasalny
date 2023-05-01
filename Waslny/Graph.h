@@ -36,6 +36,8 @@ public:
 	Graph(const Graph& graph) = delete;
 	static Graph* getInstance();
 
+	int getMaxNode();
+
 	void addNode(string node);
 	void removeNode(string node);
 
