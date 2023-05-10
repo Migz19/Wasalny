@@ -19,19 +19,19 @@ protected:
 
 	/*vector<int> freeNodeMappingIds;
 	int maxNodeMappingId;
-	unordered_map<string, int> nodeToId;  
+	unordered_map<string, int> nodeToId;
 	unordered_map<int, string> idToNode;
 
 	vector<int> freeEdgeMappingIds;
 	int maxEdgeMappingId;
-	unordered_map<string, int> edgeToId; 
+	unordered_map<string, int> edgeToId;
 	unordered_map<int, string> idtoEdge;
 	unordered_map<int, int> idToDistance;  */
 
 public:
 
 	Mapper();
-    virtual int getId(string name);
+	virtual int getId(string name);
 	virtual string getName(int id);
 	virtual void remove(int id);
 	virtual bool nameExists(string name);
