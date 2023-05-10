@@ -1,6 +1,6 @@
 #include "EdgeMapper.h"
-///
-EdgeMapper::EdgeMapper(){}
+
+EdgeMapper::EdgeMapper() {}
 
 int EdgeMapper::getDistance(int id)
 {

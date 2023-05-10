@@ -21,6 +21,6 @@ public:
 	bool nameExists(string name) override;
 	bool idExists(int id) override;
 	~EdgeMapper();
-	
+
 };
 

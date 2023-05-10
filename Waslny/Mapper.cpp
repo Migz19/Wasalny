@@ -40,7 +40,7 @@ void Mapper::remove(int id)
 	if (!idExists(id))
 		throw GraphException("node doesn't exist");
 
-    freeIds.push_back(id);
+	freeIds.push_back(id);
 	string name = idToString[id];
 
 	idToString.erase(id);
@@ -60,7 +60,7 @@ bool Mapper::idExists(int id)
 
 Mapper::~Mapper()
 {
-    maxId = 0;
+	maxId = 0;
 	freeIds.clear();
 	stringToId.clear();
 	idToString.clear();
