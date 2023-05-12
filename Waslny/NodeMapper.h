@@ -9,7 +9,7 @@
 using namespace std;
 class NodeMapper : public Mapper
 {
-
+	friend class File;
 public:
 	NodeMapper();
 	int getId(string name) override;

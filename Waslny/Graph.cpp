@@ -191,16 +191,16 @@ bool Graph::edgeExists(string edge)
 	return edgeMapper.nameExists(edge);
 }
 
-void Graph::test(int n)
-{
-	vis[n] = 1;
-	cout << nodeMapper.getName(n) << " ";
-	for (auto i : adjList[n])
-	{
-		if (!vis[i.first])
-			test(i.first);
-	}
-}
+//void Graph::test(int n)
+//{
+//	vis[n] = 1;
+//	cout << nodeMapper.getName(n) << " ";
+//	for (auto i : adjList[n])
+//	{
+//		if (!vis[i.first])
+//			test(i.first);
+//	}
+//}
 
 bool Graph::areNodesConnected(string start, string target)
 {
@@ -223,11 +223,13 @@ stack<pair<string, int>> Graph::getShortestPath(string start, string target)
 	return graphAlgorithm.getPath(n1, n2, adjList, edgeMapper, nodeMapper);
 }
 
-vector<string> Graph::display()
+vector<string> Graph::display(int algorithmUsed)
 {
 	graphAlgorithm.clr();
 	vector<string> res;
-	vector<pair<pair<int, int>, int>> v = graphAlgorithm.getConnections(adjList);
+	vector<pair<pair<int, int>, int>> v = graphAlgorithm.getConnections(adjList, algorithmUsed);
+	vector<bool> isDisplayed(adjList.size(), 0);
+
 	for (pair<pair<int, int>, int > p : v)
 	{
 		int node1 = p.first.first;
@@ -236,19 +238,29 @@ vector<string> Graph::display()
 
 		if (node2 == -1 && edge == -1) // isolated node
 		{
+			if (isDisplayed[node1])
+				continue;
+
 			if (nodeMapper.idExists(node1))
 				res.push_back(nodeMapper.getName(node1));
+
+			isDisplayed[node1] = 1;
 		}
 		else
 		{
+			if (node1 != -1)
+				isDisplayed[node1] = 1;
+			if (node2 != -1)
+				isDisplayed[node2] = 1;
+
 			string direction1 = "", direction2 = "";
 
 			if (edgeDirections[edge].first && edgeDirections[edge].second)
 				direction1 = "<--", direction2 = "-->";
 			else if (edgeDirections[edge].first)
-				direction1 = "<--", direction2 = "---";
-			else if (edgeDirections[edge].second)
 				direction1 = "---", direction2 = "-->";
+			else if (edgeDirections[edge].second)
+				direction1 = "<--", direction2 = "---";
 
 			if (node2 > node1)
 				swap(node1, node2);
@@ -259,6 +271,40 @@ vector<string> Graph::display()
 	}
 
 	return res;
+}
+
+vector<string> Graph::getMST(int algorithmUsed)
+{
+	MstAlgorithm mstAlgorithm(adjList.size());
+	vector<pair<pair<int, int>, int>> temp = mstAlgorithm.getPath(adjList, edgeDirections, edgeMapper, algorithmUsed);
+
+	vector<string> result;
+
+	if (temp[0] == make_pair(make_pair(-1, -1), -1))
+	{
+		result.push_back("Couldn't find The minimum Spaning Tree!");
+	}
+	else
+	{
+		int totalDistance = 0;
+		for (auto i : temp)
+		{
+			int node1 = i.first.first, node2 = i.first.second, edgeID = i.second;
+			int currDistance = edgeMapper.getDistance(edgeID);
+
+			totalDistance += currDistance;
+
+			string str = "";
+			str += nodeMapper.getName(node1) + " <- " + edgeMapper.getName(edgeID) + "(" + to_string(currDistance) + "km) -> " + nodeMapper.getName(node2);
+			result.push_back(str);
+		}
+
+		result.push_back("Total Distance is " + to_string(totalDistance));
+	}
+
+	return result;
+
+
 }
 
 Graph::~Graph()

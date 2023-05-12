@@ -10,6 +10,7 @@
 #include "NodeMapper.h"
 
 using namespace std;
+
 class GraphAlgorithm
 {
     int N = 1e5;
@@ -25,10 +26,12 @@ public:
 
     //              n1   n2   e
     void bfs(vector<int> sources, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v);
+    void dfs(vector<int> sources, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v);
     void dfs(int node, vector<vector<pair<int, int>>>& adjList);
-    vector<pair<pair<int, int>, int>> getConnections(vector<vector<pair<int, int>>>& adjList);
+    vector<pair<pair<int, int>, int>> getConnections(vector<vector<pair<int, int>>>& adjList, int AlgorithmUsed);
     bool dfs(int start, int target, vector<vector<pair<int, int>>>& adjList);
 
     void clr();
+
 
 };

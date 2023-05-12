@@ -12,6 +12,7 @@ class EdgeMapper : public Mapper
 {
 private:
 	unordered_map<int, int> idToDistance;
+	friend class File;
 public:
 	EdgeMapper();
 	int getDistance(int id);

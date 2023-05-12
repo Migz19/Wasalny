@@ -98,6 +98,33 @@ void GraphAlgorithm::bfs(vector<int> sources, vector<vector<pair<int, int>>>& ad
     }
 }
 
+void GraphAlgorithm::dfs(vector<int> sources, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v)
+{
+
+    stack<int> s;
+    for (int i : sources)
+        s.push(i);
+
+    while (!s.empty())
+    {
+        int node = s.top();
+        s.pop();
+
+        for (pair<int, int> p : adjList[node])
+        {
+            int child = p.first;
+            int edge = p.second;
+
+            if (!visited[edge])
+            {
+                s.push(child);
+                v.push_back({ {node,child} , edge });
+                visited[edge] = 1;
+            }
+        }
+    }
+}
+
 void GraphAlgorithm::dfs(int node, vector<vector<pair<int, int>>>& adjList)
 {
     visited[node] = true;
@@ -111,7 +138,7 @@ void GraphAlgorithm::dfs(int node, vector<vector<pair<int, int>>>& adjList)
     }
 }
 
-vector<pair<pair<int, int>, int>> GraphAlgorithm::getConnections(vector<vector<pair<int, int>>>& adjList)
+vector<pair<pair<int, int>, int>> GraphAlgorithm::getConnections(vector<vector<pair<int, int>>>& adjList, int AlgorithmUsed)
 {
     vector<int> sources, isolated;
 
@@ -130,7 +157,11 @@ vector<pair<pair<int, int>, int>> GraphAlgorithm::getConnections(vector<vector<p
 
     clr();
     vector<pair<pair<int, int>, int>> res;
-    bfs(sources, adjList, res);
+
+    if (AlgorithmUsed == 0)  // useDfs
+        dfs(sources, adjList, res);
+    else // useBfs
+        bfs(sources, adjList, res);
 
     for (int i : isolated)
     {

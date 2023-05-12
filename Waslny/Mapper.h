@@ -11,7 +11,7 @@ using namespace std;
 class Mapper
 {
 protected:
-
+	friend class File;
 	int maxId;
 	vector<int> freeIds;
 	unordered_map<string, int> stringToId;

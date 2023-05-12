@@ -6,6 +6,7 @@ using namespace std;
 class GraphException : public exception
 {
 private:
+
 	string message;
 
 public:
