@@ -65,7 +65,7 @@ void File::saveGraphAdjList()
 		for (int i = 0; i < graph->adjList.size(); i++)
 		{
 			listFile << "#\n";
-			listFile << to_string(i);
+			listFile << to_string(i); 
 			listFile << "\n";
 
 			for (pair<int, int> p : graph->adjList[i])

@@ -6,11 +6,12 @@ GraphAlgorithm::GraphAlgorithm()
     clr();
 }
 
-void GraphAlgorithm::dijkstra(int n, int end, vector<vector<pair<int, int>>>& adj, EdgeMapper& edgeMappper)
+void GraphAlgorithm::dijkstra(int source, int end, vector<vector<pair<int, int>>>& adj, EdgeMapper& edgeMappper)
 {                    // distance        node
     priority_queue<pair<long long, int>> pq;
-    pq.push({ 0,n });
-    dist[n] = 0;
+    pq.push({ 0,source });
+    dist[source] = 0;                   //first node 
+
     while (!pq.empty())
     {
         int node = pq.top().second;
@@ -26,8 +27,8 @@ void GraphAlgorithm::dijkstra(int n, int end, vector<vector<pair<int, int>>>& ad
             if (dist[adj[node][i].first] > newCost)
             {
                 dist[adj[node][i].first] = newCost;
-                pr[adj[node][i].first].first = node;
-                pr[adj[node][i].first].second = newCost;
+                previousNode[adj[node][i].first].first = node;
+                previousNode[adj[node][i].first].second = newCost;
                 pq.push({ -newCost, adj[node][i].first });
             }
         }
@@ -40,17 +41,14 @@ stack<pair<string, int>> GraphAlgorithm::getPath(int start, int end, vector<vect
 {
     dijkstra(start, end, adj, edgeMappper); // run GraphAlgorithm's algorithm
     stack<pair<string, int>> path;
-    for (int node = end; node != -1; node = pr[node].first) {
-        path.push({ nodeMapper.getName(node) , pr[node].second }); // trace back the path from end to start
+    for (int node = end; node != -1; node = previousNode[node].first) {
+        path.push({ nodeMapper.getName(node) , previousNode[node].second }); // trace back the path from end to start
     }
 
     return path;
 }
 
-//vector<pair<pair<int, int>, int>> GraphAlgorithm::bfs(int start)
-//{
-//    
-//}
+
 
 bool GraphAlgorithm::dfs(int start, int target, vector<vector<pair<int, int>>>& adjList)
 {
@@ -73,6 +71,7 @@ bool GraphAlgorithm::dfs(int start, int target, vector<vector<pair<int, int>>>& 
 
 void GraphAlgorithm::bfs(vector<int> sources, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v)
 {
+    //multi source bfs  ===> faster 
 
     queue<int> q;
     for (int i : sources)
@@ -173,6 +172,6 @@ vector<pair<pair<int, int>, int>> GraphAlgorithm::getConnections(vector<vector<p
 void GraphAlgorithm::clr()
 {
     dist = vector<long long>(N, inf);
-    pr = vector<pair<int, int>>(N, { -1 , 0 });
+    previousNode = vector<pair<int, int>>(N, { -1 , 0 });
     visited = vector<bool>(N, 0);
 }
