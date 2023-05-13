@@ -57,7 +57,8 @@ void MstAlgorithm::kruskal()
 void MstAlgorithm::prim(edge source, int otherSourcesCnt)
 {
     vector<bool> vis(maxNodeID, 0);
-    nodesCnt += otherSourcesCnt;
+
+    set<int> nodes;
 
     priority_queue<edge> qu;
     qu.push(source);
@@ -71,7 +72,9 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
             continue;
 
         vis[e.node1] = 1;
-        // nodesCnt++;  //node1 is not counted yet up to this point
+        nodes.insert(e.node1);
+        nodes.insert(e.node2);
+
 
         if (!(e.node1 == source.node1 && e.node2 == source.node2 && e.distance == source.distance))
             totalDistance += e.distance, answer.push_back(e);
@@ -83,8 +86,9 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
                 qu.push(child), nodesCnt++;
         }
     }
-    cout << nodesCnt << " " << answer.size() << endl;
+    //cout << nodesCnt << " " << answer.size() << endl;
 
+    nodesCnt = nodes.size();
     if (nodesCnt - 1 != answer.size())
     {
         totalDistance = -1;
@@ -99,7 +103,7 @@ vector<pair<pair<int, int>, int>> MstAlgorithm::getPath(vector<vector<pair<int, 
     edge source(0, 0, 0, 0);
     bool foundSource = 0;
 
-    for (int i = 1; i < 5; i++)
+    for (int i = 1; i < adjList.size(); i++) ///adj.size
     {
         int node1 = i;
         for (pair<int, int> p : adjList[i])
@@ -141,7 +145,16 @@ vector<pair<pair<int, int>, int>> MstAlgorithm::getPath(vector<vector<pair<int, 
                 dfs(i);
             }
         }
-        prim(source, otherSourcesCnt);
+
+        if (otherSourcesCnt > 1)
+        {
+            totalDistance = -1;
+            answer.clear();
+        }
+        else
+        {
+            prim(source, otherSourcesCnt);
+        }
     }
 
     if (answer.empty())

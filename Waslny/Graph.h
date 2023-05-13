@@ -10,7 +10,7 @@
 #include "NodeMapper.h"
 #include "EdgeMapper.h"
 #include "GraphAlgorithm.h"
-#include "MstAlgorithm.h"
+#include"MstAlgorithm.h"
 
 using namespace std;
 
@@ -20,10 +20,11 @@ class Graph
 {
 private:
 
-	friend class File;
+	friend class File;//to access private data 
 	int sizeOfList;
-	vector< vector<pair<int, int>> > adjList;
-	vector< pair<bool, bool> > edgeDirections;
+	vector< vector<pair<int, int>> > adjList;    // node -> {node,id of edge}
+
+	vector< pair<bool, bool> > edgeDirections;	// directed or undirected O(1)
 
 	NodeMapper nodeMapper;
 	EdgeMapper edgeMapper;
@@ -36,7 +37,6 @@ private:
 	bool nodeExists(string node);
 	bool edgeExists(string edge);
 
-	//bool vis[500];
 
 public:
 
@@ -53,14 +53,12 @@ public:
 	void removeEdge(string node1, string node2, string edgeName);
 
 	int getDistance(int edgeId);
-	vector<string> display(int algorithmUsed);
+	vector<string> display(int algorithmUsed); // bfs or dfs 
 	bool areNodesConnected(string start, string target);
 	stack<pair<string, int>> getShortestPath(string start, string target);
-	
-	vector<string>getMST(int algorithmUsed);
-	
 
-	//void test(int n);
+	vector<string>getMST(int);
+
 	~Graph();
 
 

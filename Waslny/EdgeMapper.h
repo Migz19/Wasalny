@@ -11,8 +11,9 @@ using namespace std;
 class EdgeMapper : public Mapper
 {
 private:
-	unordered_map<int, int> idToDistance;
 	friend class File;
+
+	unordered_map<int, int> idToDistance;
 public:
 	EdgeMapper();
 	int getDistance(int id);

@@ -18,9 +18,9 @@ public:
 
 private slots:
     void on_addNodeButton_clicked();
-
+    
     void on_addEdgeButton_clicked();
-
+    
     void on_displayGraphButton_clicked();
     void on_displayGraphButton1_clicked();
 

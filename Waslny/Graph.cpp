@@ -68,6 +68,31 @@ void Graph::removeNode(string node)
 	nodeMapper.remove(targetNode);
 }
 
+pair<bool, string> Graph::canAddEdge(string from, string to, string edgeName, int distance)
+{
+	bool flag = 1;
+	string message = "No errors";
+
+	if (!nodeExists(from) || !nodeExists(to))
+	{
+		flag = 0;
+		message = "Node doesn't exist";
+	}
+	else if (edgeExists(edgeName))
+	{
+		flag = 0;
+		message = "Edge already exists";
+	}
+	else if (distance <= 0)
+	{
+		flag = 0;
+		message = "Invalid distance";
+
+	}
+
+	return { flag, message };
+}
+
 void Graph::addUnDirectedEdge(string from, string to, string edgeName, int distance)
 {
 	pair<bool, string> canAdd = canAddEdge(from, to, edgeName, distance);
@@ -77,6 +102,25 @@ void Graph::addUnDirectedEdge(string from, string to, string edgeName, int dista
 
 	addDirectedEdgeHelper(from, to, edgeName, distance);
 	addDirectedEdgeHelper(to, from, edgeName, distance);
+
+}
+
+void Graph::addDirectedEdgeHelper(string from, string to, string edgeName, int distance)
+{
+	int node1 = nodeMapper.getId(from);
+	int node2 = nodeMapper.getId(to);
+
+	int currEdgeId = edgeMapper.getId(edgeName, distance);
+
+	adjList[node1].push_back({ node2, currEdgeId });
+
+	if (currEdgeId == edgeDirections.size())
+		edgeDirections.resize(edgeDirections.size() * 2);
+
+	if (node1 > node2)
+		edgeDirections[currEdgeId].first = 1;
+	else
+		edgeDirections[currEdgeId].second = 1;
 
 }
 
@@ -103,16 +147,16 @@ void Graph::removeEdge(string node1, string node2, string edgeName)
 	int targetNode1 = nodeMapper.getId(node1), targetNode2 = nodeMapper.getId(node2);
 	int edgeId = edgeMapper.getId(edgeName, -1);  // -1 doesn't affect anything (edge already exists)
 
-	for (int i = 0; i < adjList.size(); i++)
+	for (int currNode1 = 0; currNode1 < adjList.size(); ++currNode1)
 	{
-		for (int j = 0; j < adjList[i].size(); j++)
+		for (int j = 0; j < adjList[currNode1].size(); j++)
 		{
-			int currNode = adjList[i][j].first;
-			int currEdge = adjList[i][j].second;
+			int currNode2 = adjList[currNode1][j].first;
+			int currEdge = adjList[currNode1][j].second;
 
-			if (((i == targetNode1 && currNode == targetNode2) || (i == targetNode2 && currNode == targetNode1)) && currEdge == edgeId)
+			if (((currNode1 == targetNode1 && currNode2 == targetNode2) || (currNode1 == targetNode2 && currNode2 == targetNode1)) && currEdge == edgeId)
 			{
-				adjList[i].erase(adjList[i].begin() + j);
+				adjList[currNode1].erase(adjList[currNode1].begin() + j);
 				counter++;
 			}
 
@@ -137,49 +181,6 @@ int Graph::getDistance(int edgeId)
 	return edgeMapper.getDistance(edgeId);
 }
 
-void Graph::addDirectedEdgeHelper(string from, string to, string edgeName, int distance)
-{
-	int node1 = nodeMapper.getId(from);
-	int node2 = nodeMapper.getId(to);
-
-	int currEdgeId = edgeMapper.getId(edgeName, distance);
-
-	adjList[node1].push_back({ node2, currEdgeId });
-
-	if (currEdgeId == edgeDirections.size())
-		edgeDirections.resize(edgeDirections.size() * 2);
-
-	if (node1 > node2)
-		edgeDirections[currEdgeId].first = 1;
-	else
-		edgeDirections[currEdgeId].second = 1;
-
-}
-
-pair<bool, string> Graph::canAddEdge(string from, string to, string edgeName, int distance)
-{
-	bool flag = 1;
-	string message = "No errors";
-
-	if (!nodeExists(from) || !nodeExists(to))
-	{
-		flag = 0;
-		message = "Node doesn't exist";
-	}
-	else if (edgeExists(edgeName))
-	{
-		flag = 0;
-		message = "Edge already exists";
-	}
-	else if (distance <= 0)
-	{
-		flag = 0;
-		message = "Invalid distance";
-
-	}
-
-	return { flag, message };
-}
 
 bool Graph::nodeExists(string node)
 {
@@ -190,7 +191,7 @@ bool Graph::edgeExists(string edge)
 {
 	return edgeMapper.nameExists(edge);
 }
-
+//
 //void Graph::test(int n)
 //{
 //	vis[n] = 1;
@@ -211,7 +212,7 @@ bool Graph::areNodesConnected(string start, string target)
 	return graphAlgorithm.dfs(n1, n2, adjList);
 }
 
-stack<pair<string, int>> Graph::getShortestPath(string start, string target)
+stack<pair<string, int>> Graph::getShortestPath(string start, string target)  //ayman
 {
 	if (!areNodesConnected(start, target))
 		throw GraphException("Nodes are not connected");
@@ -222,21 +223,20 @@ stack<pair<string, int>> Graph::getShortestPath(string start, string target)
 	graphAlgorithm.clr();
 	return graphAlgorithm.getPath(n1, n2, adjList, edgeMapper, nodeMapper);
 }
-
 vector<string> Graph::display(int algorithmUsed)
 {
-	graphAlgorithm.clr();
+	graphAlgorithm.clr();//
 	vector<string> res;
-	vector<pair<pair<int, int>, int>> v = graphAlgorithm.getConnections(adjList, algorithmUsed);
+	vector<pair<pair<int, int>, int>> connections = graphAlgorithm.getConnections(adjList, algorithmUsed);
 	vector<bool> isDisplayed(adjList.size(), 0);
 
-	for (pair<pair<int, int>, int > p : v)
+	for (pair<pair<int, int>, int > p : connections)
 	{
 		int node1 = p.first.first;
 		int node2 = p.first.second;
 		int edge = p.second;
 
-		if (node2 == -1 && edge == -1) // isolated node
+		if (node2 == -1 && edge == -1) // isolated node ( without edge )
 		{
 			if (isDisplayed[node1])
 				continue;
@@ -244,14 +244,13 @@ vector<string> Graph::display(int algorithmUsed)
 			if (nodeMapper.idExists(node1))
 				res.push_back(nodeMapper.getName(node1));
 
-			isDisplayed[node1] = 1;
+			isDisplayed[node1] = 1;  // to display the node one time
 		}
-		else
+		else    //with edge  
 		{
-			if (node1 != -1)
-				isDisplayed[node1] = 1;
-			if (node2 != -1)
-				isDisplayed[node2] = 1;
+			
+			isDisplayed[node1] = 1;
+			isDisplayed[node2] = 1;
 
 			string direction1 = "", direction2 = "";
 
@@ -263,7 +262,7 @@ vector<string> Graph::display(int algorithmUsed)
 				direction1 = "<--", direction2 = "---";
 
 			if (node2 > node1)
-				swap(node1, node2);
+				swap(node1, node2);//to adjust the direction of the arrow 
 
 			string s = nodeMapper.getName(node1) + " " + direction1 + " " + edgeMapper.getName(edge) + " distance = (" + to_string(edgeMapper.getDistance(edge)) + " km) " + direction2 + " " + nodeMapper.getName(node2);
 			res.push_back(s);
@@ -272,8 +271,7 @@ vector<string> Graph::display(int algorithmUsed)
 
 	return res;
 }
-
-vector<string> Graph::getMST(int algorithmUsed)
+vector<string> Graph::getMST(int algorithmUsed)   
 {
 	MstAlgorithm mstAlgorithm(adjList.size());
 	vector<pair<pair<int, int>, int>> temp = mstAlgorithm.getPath(adjList, edgeDirections, edgeMapper, algorithmUsed);
@@ -306,7 +304,6 @@ vector<string> Graph::getMST(int algorithmUsed)
 
 
 }
-
 Graph::~Graph()
 {
 	sizeOfList = 0;

@@ -10,23 +10,14 @@ using namespace std;
 
 class Mapper
 {
-protected:
 	friend class File;
+
+protected:
+
 	int maxId;
-	vector<int> freeIds;
+	vector<int> freeIds; //id of removed nodes or edges 
 	unordered_map<string, int> stringToId;
 	unordered_map<int, string> idToString;
-
-	/*vector<int> freeNodeMappingIds;
-	int maxNodeMappingId;
-	unordered_map<string, int> nodeToId;
-	unordered_map<int, string> idToNode;
-
-	vector<int> freeEdgeMappingIds;
-	int maxEdgeMappingId;
-	unordered_map<string, int> edgeToId;
-	unordered_map<int, string> idtoEdge;
-	unordered_map<int, int> idToDistance;  */
 
 public:
 

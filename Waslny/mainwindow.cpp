@@ -8,22 +8,38 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
 {
-    //backgroundPalette.setColor(QPalette::Window, QColor(128, 0, 128));  // Change the color to your desired color
+    //backgroundPalette.setColor(QPalette::Window, QColor(255, 0, 100));  // Change the color to your desired color
     //setAutoFillBackground(true);
     //setPalette(backgroundPalette);
 
     //setStyleSheet("MainWindow { background-image: url(back.jpg);background-repeat: no-repeat; background-position: center; background-size: cover; }");
 
-
+    
     resize(1300, 800);
     // Set up the UI
-    displayLabel = new QLabel(this);
-    displayLabel->setGeometry(50, 360, 1000, 500);  // to display every thing
+    QScrollArea* scrollArea = new QScrollArea(this);
+    scrollArea->setGeometry(50, 450, 1000, 300);
+    scrollArea->setWidgetResizable(true);
+
+    // Set up the display label
+    displayLabel = new QLabel(scrollArea);
+    displayLabel->setGeometry(0, 0, 1000, 500);
+    displayLabel->setAlignment(Qt::AlignTop);
+    displayLabel->setWordWrap(true);
+
+    // Set up the font size of displayLabel
+    QFont font = displayLabel->font();
+    font.setPointSize(14);
+    displayLabel->setFont(font);
+
+    // Set the displayLabel as the widget for the scroll area
+    scrollArea->setWidget(displayLabel);
+
 
     // Increase the font size of displayLabel
-    QFont font = displayLabel->font();
-    font.setPointSize(14);  // Set the desired font size
-    displayLabel->setFont(font);
+    QFont font1 = displayLabel->font();
+    font1.setPointSize(14);  // Set the desired font size
+    displayLabel->setFont(font1);
 
 
     addNodeButton = new QPushButton("Add City", this);
@@ -32,15 +48,15 @@ MainWindow::MainWindow(QWidget* parent)
     nodeNameLineEdit = new QLineEdit(this);
     nodeNameLineEdit->setGeometry(250, 90, 170, 30);
     nodeNameLineEdit->setPlaceholderText("City name");
-
+     
 
     removeNodeButton = new QPushButton("Remove City", this);
-    removeNodeButton->setGeometry(500, 90, 130, 30);
+    removeNodeButton->setGeometry(500,90, 130, 30);
 
     removeNodeLineEdit = new QLineEdit(this);
     removeNodeLineEdit->setGeometry(650, 90, 140, 30);
     removeNodeLineEdit->setPlaceholderText("City name");
-
+     
 
     addEdgeButton = new QPushButton("Add two ways Road", this);
     addEdgeButton->setGeometry(150, 150, 150, 30);
@@ -67,10 +83,10 @@ MainWindow::MainWindow(QWidget* parent)
     displayGraphButton1 = new QPushButton("Display (DFS)", this);
     displayGraphButton1->setGeometry(300, 390, 130, 30);
 
-    getMSTButton = new QPushButton("MST(BFS)", this);
+    getMSTButton = new QPushButton("MST(prim)", this);
     getMSTButton->setGeometry(600, 390, 130, 30);
 
-    getMSTButton1 = new QPushButton("MST(DFS)", this);
+    getMSTButton1 = new QPushButton("MST(kruskal)", this);
     getMSTButton1->setGeometry(450, 390, 130, 30);
 
     removeEdgeButton = new QPushButton("Remove Road", this);
@@ -197,14 +213,12 @@ void MainWindow::on_addEdgeButton_clicked()
     edgeNameLineEdit1->clear();
     distanceLineEdit1->clear();
 
-
+    
 }
 void MainWindow::on_displayGraphButton_clicked()
 {
-
     vector<std::string> graphData = graph->display(useBfs);
     string result;
-
 
     for (const auto& data : graphData)
     {
@@ -234,11 +248,11 @@ void MainWindow::on_removeNodeButton_clicked()
     try
     {
         graph->removeNode(nodeToRemove.toStdString());
-        displayLabel->setText("City " + nodeToRemove + " removed successfully!");
+        displayLabel->setText("City " +nodeToRemove+" removed successfully!");
     }
     catch (const GraphException& exception)
     {
-        string msg = "This city doesn't exist";
+        string msg="This city doesn't exist";
         displayLabel->setText(QString::fromStdString(msg));
     }
 }
@@ -262,7 +276,7 @@ void MainWindow::on_addDirectedEdgeButton_clicked()
     }
     catch (const GraphException& ex)
     {
-        string msg = "can't add road";
+        string msg="can't add road";
         displayLabel->setText(QString::fromStdString(msg));
     }
     fromNodeLineEdit->clear();
@@ -280,22 +294,27 @@ void MainWindow::on_removeEdgeButton_clicked()
     string from = fromNode.toStdString();
     string to = toNode.toStdString();
     string edge = edgeName.toStdString();
-    bool flag = 1;
+  //  bool flag = 1;
     try
     {
         graph->removeEdge(fromNode.toStdString(), toNode.toStdString(), edgeName.toStdString());
         displayLabel->setText("Road removed successfully!");
+    //    flag = 0;
     }
     catch (const GraphException& ex)
     {
-
+        
         string msg = "Cannot remove the road. Either the city or the road itself doesn't exist.";
         displayLabel->setText(QString::fromStdString(msg));
-        flag = 0;
+      //  flag = 0;
     }
+    
+    //if(flag)
+    fromNodeLineEdit2->clear();
+    toNodeLineEdit2->clear();
+    edgeNameLineEdit2->clear();
 
-    if (flag)
-        removeEdgeDetailsLineEdit->clear();
+
 }
 
 void MainWindow::on_exitButton_clicked()
@@ -319,7 +338,7 @@ void MainWindow::on_saveButton_clicked()
 }
 void MainWindow::on_getMSTButton_clicked()
 {
-    vector<std::string> graphData = graph->getMST(useDfs);
+    vector<std::string> graphData = graph->getMST(usePrim);
     string result;
 
 
@@ -332,7 +351,7 @@ void MainWindow::on_getMSTButton_clicked()
 }
 void MainWindow::on_getMSTButton1_clicked()
 {
-    vector<std::string> graphData = graph->getMST(useBfs);
+    vector<std::string> graphData = graph->getMST(useKruskal);
     string result;
 
 
@@ -354,16 +373,16 @@ void MainWindow::on_shortestPathButton_clicked()
     try
     {
         stack<std::pair<std::string, int>> shortestPath = graph->getShortestPath(source, destination);
-        int totalDis = 0;
+        int totalDis=0;
         string result;
         while (!shortestPath.empty())
         {
-            result += "->" + shortestPath.top().first + " (" + std::to_string(shortestPath.top().second) + " km)";
+            result +="->"+ shortestPath.top().first + " (" + std::to_string(shortestPath.top().second) + " km)";
             totalDis += shortestPath.top().second;
             shortestPath.pop();
 
         }
-        result += "with total distance " + to_string(totalDis) + "km \n";
+        result += "with total distance " +to_string(totalDis) + "km \n";
 
         displayLabel->setText(QString::fromStdString(result));
     }
