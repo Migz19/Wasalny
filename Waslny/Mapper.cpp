@@ -10,7 +10,7 @@ int Mapper::getId(string name)
 	if (nameExists(name))
 		return stringToId[name];
 
-	if (!freeIds.empty())  // when a name is removed its Id can be reused so the all the ids of deleted names are stored in freeIds
+	if (!freeIds.empty())  // when a name is removed its Id can be reused so the ids of deleted names are stored in freeIds
 	{
 		int lastAvailable = freeIds.size() - 1;
 		stringToId[name] = freeIds[lastAvailable];

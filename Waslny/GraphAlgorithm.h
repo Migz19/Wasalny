@@ -15,8 +15,7 @@ class GraphAlgorithm
 {
     int N = 1e5;
     long long inf = 1e9;
-    vector<long long> dist;
-    vector<pair<int, int>> previousNode;
+    vector<pair<int, int>> previousNode; //
     vector<bool> visited;
 
 public:

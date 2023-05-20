@@ -58,7 +58,7 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
 {
     vector<bool> vis(maxNodeID, 0);
 
-    set<int> nodes;
+  //  set<int> nodes;
 
     priority_queue<edge> qu;
     qu.push(source);
@@ -72,8 +72,8 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
             continue;
 
         vis[e.node1] = 1;
-        nodes.insert(e.node1);
-        nodes.insert(e.node2);
+        /*nodes.insert(e.node1);
+        nodes.insert(e.node2);*/
 
 
         if (!(e.node1 == source.node1 && e.node2 == source.node2 && e.distance == source.distance))
@@ -83,20 +83,19 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
         {
             int t = child.node1;
             if (!vis[child.node1])
-                qu.push(child), nodesCnt++;
+                qu.push(child);
         }
     }
-    //cout << nodesCnt << " " << answer.size() << endl;
 
-    nodesCnt = nodes.size();
-    if (nodesCnt - 1 != answer.size())
+   // nodesCnt = nodes.size();
+  /*  if (nodesCnt - 1 != answer.size())
     {
         totalDistance = -1;
         answer.clear();
-    }
+    }*/
 }
 
-vector<pair<pair<int, int>, int>> MstAlgorithm::getPath(vector<vector<pair<int, int>>> adjList, vector<pair<bool, bool>>& edgeDirections, EdgeMapper& edgeMapper, int algorithmUsed)
+vector<pair<pair<int, int>, int>> MstAlgorithm::getPath(vector<vector<pair<int, int>>>& adjList, vector<pair<bool, bool>>& edgeDirections, EdgeMapper& edgeMapper, int algorithmUsed)
 {
     vector<pair<pair<int, int>, int>> res;
 
@@ -113,6 +112,9 @@ vector<pair<pair<int, int>, int>> MstAlgorithm::getPath(vector<vector<pair<int, 
 
             if (edgeDirections[edgeID].first == 1 && edgeDirections[edgeID].second == 1)
             {
+                tempAdjList[node1].push_back(node2);
+                tempAdjList[node2].push_back(node1);
+
                 edge e(node1, node2, edgeMapper.getDistance(edgeID), edgeID);
 
                 edgeListKruskal.push_back(e);
@@ -146,7 +148,7 @@ vector<pair<pair<int, int>, int>> MstAlgorithm::getPath(vector<vector<pair<int, 
             }
         }
 
-        if (otherSourcesCnt > 1)
+        if (otherSourcesCnt > 0)
         {
             totalDistance = -1;
             answer.clear();

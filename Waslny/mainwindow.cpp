@@ -8,26 +8,21 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
 {
-    //backgroundPalette.setColor(QPalette::Window, QColor(255, 0, 100));  // Change the color to your desired color
-    //setAutoFillBackground(true);
-    //setPalette(backgroundPalette);
-
-    //setStyleSheet("MainWindow { background-image: url(back.jpg);background-repeat: no-repeat; background-position: center; background-size: cover; }");
-
+    
     
     resize(1300, 800);
-    // Set up the UI
-    QScrollArea* scrollArea = new QScrollArea(this);
-    scrollArea->setGeometry(50, 450, 1000, 300);
-    scrollArea->setWidgetResizable(true);
 
-    // Set up the display label
+    QScrollArea* scrollArea = new QScrollArea(this);
+    scrollArea->setGeometry(50, 450, 1000, 300);  //  (x,y, x length , y lenght)   
+    scrollArea->setWidgetResizable(true);         //  to fit the data 
+
+    // display label => the label that diplay everything 
     displayLabel = new QLabel(scrollArea);
     displayLabel->setGeometry(0, 0, 1000, 500);
     displayLabel->setAlignment(Qt::AlignTop);
     displayLabel->setWordWrap(true);
 
-    // Set up the font size of displayLabel
+    
     QFont font = displayLabel->font();
     font.setPointSize(14);
     displayLabel->setFont(font);
@@ -219,10 +214,9 @@ void MainWindow::on_displayGraphButton_clicked()
 {
     vector<std::string> graphData = graph->display(useBfs);
     string result;
-
-    for (const auto& data : graphData)
+    for (int i = 0; i < graphData.size(); i++)
     {
-        result += data + "\n";
+        result += graphData[i] + "\n";
     }
 
     displayLabel->setText(QString::fromStdString(result));
@@ -233,9 +227,9 @@ void MainWindow::on_displayGraphButton1_clicked()
     string result;
 
 
-    for (const auto& data : graphData)
+    for (int i = 0; i < graphData.size(); i++)
     {
-        result += data + "\n";
+        result += graphData[i] + "\n";
     }
 
     displayLabel->setText(QString::fromStdString(result));
@@ -272,7 +266,7 @@ void MainWindow::on_addDirectedEdgeButton_clicked()
     try
     {
         graph->addDirectedEdge(from, to, edge, dist);
-        displayLabel->setText("Directed edge added: " + edgeName + " (" + distance + " km)");
+        displayLabel->setText("Directed road added: " + edgeName + " (" + distance + " km)");
     }
     catch (const GraphException& ex)
     {
@@ -320,14 +314,13 @@ void MainWindow::on_removeEdgeButton_clicked()
 void MainWindow::on_exitButton_clicked()
 {
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Exit", "Are you sure you want to exit?", QMessageBox::Yes | QMessageBox::No);
+    reply = QMessageBox::question(this, "Exit", "Do you want to exit ?", QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
         File file;
         file.save();
-
         QApplication::quit();
-    }
+    }    
 }
 void MainWindow::on_saveButton_clicked()
 {
@@ -342,9 +335,9 @@ void MainWindow::on_getMSTButton_clicked()
     string result;
 
 
-    for (const auto& data : graphData)
+    for (int i = 0; i < graphData.size(); i++)
     {
-        result += data + "\n";
+        result += graphData[i] + "\n";
     }
 
     displayLabel->setText(QString::fromStdString(result));
@@ -355,9 +348,9 @@ void MainWindow::on_getMSTButton1_clicked()
     string result;
 
 
-    for (const auto& data : graphData)
+    for (int i = 0; i < graphData.size(); i++)
     {
-        result += data + "\n";
+        result += graphData[i] + "\n";
     }
 
     displayLabel->setText(QString::fromStdString(result));
@@ -372,23 +365,23 @@ void MainWindow::on_shortestPathButton_clicked()
 
     try
     {
-        stack<std::pair<std::string, int>> shortestPath = graph->getShortestPath(source, destination);
+        stack<pair<string, int>> shortestPath = graph->getShortestPath(source, destination);
         int totalDis=0;
         string result;
         while (!shortestPath.empty())
         {
-            result +="->"+ shortestPath.top().first + " (" + std::to_string(shortestPath.top().second) + " km)";
-            totalDis += shortestPath.top().second;
+            result +="->"+ shortestPath.top().first;
+            totalDis = shortestPath.top().second;
             shortestPath.pop();
 
         }
-        result += "with total distance " +to_string(totalDis) + "km \n";
+        result += " with total distance " +to_string(totalDis) + " km \n";
 
         displayLabel->setText(QString::fromStdString(result));
     }
     catch (const GraphException& ex)
     {
-        string errorMsg = "Cannot find the shortest path between " + source + " and " + destination;
+        string errorMsg = "Cannot find the shortest path from " + source + " to " + destination;
         displayLabel->setText(QString::fromStdString(errorMsg));
     }
 

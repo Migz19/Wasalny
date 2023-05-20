@@ -7,26 +7,25 @@ GraphAlgorithm::GraphAlgorithm()
 }
 
 void GraphAlgorithm::dijkstra(int source, int end, vector<vector<pair<int, int>>>& adj, EdgeMapper& edgeMappper)
-{                    // distance        node
+{                    // distance , node
     priority_queue<pair<long long, int>> pq;
     pq.push({ 0,source });
-    dist[source] = 0;                   //first node 
+    previousNode[source].second = 0;                   //first node 
 
     while (!pq.empty())
     {
         int node = pq.top().second;
-        int cost = -edgeMappper.getDistance(pq.top().first);
+        int cost = -pq.top().first;
         pq.pop();
         if (node == end)
             break;
-        if (cost > dist[node])
+        if (cost > previousNode[node].second)
             continue;
         for (int i = 0; i < adj[node].size(); i++)
         {
-            long long newCost = cost + edgeMappper.getDistance(adj[node][i].second);
-            if (dist[adj[node][i].first] > newCost)
+            long long newCost = cost + edgeMappper.getDistance(adj[node][i].second);  // pass the id to get the distance 
+            if ( newCost < previousNode[adj[node][i].first].second)
             {
-                dist[adj[node][i].first] = newCost;
                 previousNode[adj[node][i].first].first = node;
                 previousNode[adj[node][i].first].second = newCost;
                 pq.push({ -newCost, adj[node][i].first });
@@ -63,7 +62,7 @@ bool GraphAlgorithm::dfs(int start, int target, vector<vector<pair<int, int>>>& 
     {
         if (!visited[adjList[start][i].first])
         {
-            result = dfs(adjList[start][i].first, target, adjList);
+            result |= dfs(adjList[start][i].first, target, adjList);
         }
     }
     return result;
@@ -168,10 +167,8 @@ vector<pair<pair<int, int>, int>> GraphAlgorithm::getConnections(vector<vector<p
     }
     return res;
 }
-
 void GraphAlgorithm::clr()
 {
-    dist = vector<long long>(N, inf);
-    previousNode = vector<pair<int, int>>(N, { -1 , 0 });
+    previousNode = vector<pair<int, int>>(N, { -1 , inf });
     visited = vector<bool>(N, 0);
 }

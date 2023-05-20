@@ -44,8 +44,11 @@ void Graph::removeNode(string node)
 	for (int i = 0; i < adjList[targetNode].size(); i++)
 	{
 		int connectingEdge = adjList[targetNode][i].second;
-		if (edgeMapper.idExists(connectingEdge))
+		if (edgeMapper.idExists(connectingEdge)) 
+		{
 			edgeMapper.remove(connectingEdge);
+			edgeDirections[connectingEdge].first = edgeDirections[connectingEdge].second = 0;
+		}
 	}
 
 	adjList[targetNode].clear();
@@ -58,8 +61,11 @@ void Graph::removeNode(string node)
 			int connectingEdge = adjList[i][j].second;
 			if (currNode == targetNode)
 			{
-				if (edgeMapper.idExists(connectingEdge))
+				if (edgeMapper.idExists(connectingEdge)) 
+				{
 					edgeMapper.remove(connectingEdge);
+					edgeDirections[connectingEdge].first = edgeDirections[connectingEdge].second = 0;
+				}
 				adjList[i].erase(adjList[i].begin() + j);
 			}
 		}
@@ -87,7 +93,11 @@ pair<bool, string> Graph::canAddEdge(string from, string to, string edgeName, in
 	{
 		flag = 0;
 		message = "Invalid distance";
-
+	}
+	else if (from == to)
+	{
+		flag = 0;
+		message = "No direct cycles are allowed";
 	}
 
 	return { flag, message };
@@ -98,7 +108,7 @@ void Graph::addUnDirectedEdge(string from, string to, string edgeName, int dista
 	pair<bool, string> canAdd = canAddEdge(from, to, edgeName, distance);
 
 	if (!canAdd.first)
-		throw GraphException(canAdd.second);
+		throw GraphException(canAdd.second);  // the msg 
 
 	addDirectedEdgeHelper(from, to, edgeName, distance);
 	addDirectedEdgeHelper(to, from, edgeName, distance);
@@ -112,7 +122,7 @@ void Graph::addDirectedEdgeHelper(string from, string to, string edgeName, int d
 
 	int currEdgeId = edgeMapper.getId(edgeName, distance);
 
-	adjList[node1].push_back({ node2, currEdgeId });
+	adjList[node1].push_back({ node2, currEdgeId }); 
 
 	if (currEdgeId == edgeDirections.size())
 		edgeDirections.resize(edgeDirections.size() * 2);
@@ -163,8 +173,9 @@ void Graph::removeEdge(string node1, string node2, string edgeName)
 			if (counter == 2) // if cnt == 2 then i removed the edge so no need to continue looping
 			{
 				edgeMapper.remove(edgeId);
-				return;
+				edgeDirections[edgeId].first = edgeDirections[edgeId].second = 0;
 
+				return;
 			}
 		}
 
@@ -172,8 +183,10 @@ void Graph::removeEdge(string node1, string node2, string edgeName)
 
 	if (!counter) // if nodes and edge exist but the edge doesn't connect those two
 		throw GraphException("Edge doesn't exist");
-	else
+	else {
 		edgeMapper.remove(edgeId);
+		edgeDirections[edgeId].first = edgeDirections[edgeId].second=0;
+	}
 }
 
 int Graph::getDistance(int edgeId)
@@ -191,17 +204,7 @@ bool Graph::edgeExists(string edge)
 {
 	return edgeMapper.nameExists(edge);
 }
-//
-//void Graph::test(int n)
-//{
-//	vis[n] = 1;
-//	cout << nodeMapper.getName(n) << " ";
-//	for (auto i : adjList[n])
-//	{
-//		if (!vis[i.first])
-//			test(i.first);
-//	}
-//}
+
 
 bool Graph::areNodesConnected(string start, string target)
 {
@@ -212,7 +215,7 @@ bool Graph::areNodesConnected(string start, string target)
 	return graphAlgorithm.dfs(n1, n2, adjList);
 }
 
-stack<pair<string, int>> Graph::getShortestPath(string start, string target)  //ayman
+stack<pair<string, int>> Graph::getShortestPath(string start, string target)  
 {
 	if (!areNodesConnected(start, target))
 		throw GraphException("Nodes are not connected");
@@ -249,8 +252,10 @@ vector<string> Graph::display(int algorithmUsed)
 		else    //with edge  
 		{
 			
-			isDisplayed[node1] = 1;
-			isDisplayed[node2] = 1;
+			if (node1 != -1)
+				isDisplayed[node1] = 1;
+			if (node2 != -1)
+				isDisplayed[node2] = 1;
 
 			string direction1 = "", direction2 = "";
 
@@ -301,8 +306,6 @@ vector<string> Graph::getMST(int algorithmUsed)
 	}
 
 	return result;
-
-
 }
 Graph::~Graph()
 {

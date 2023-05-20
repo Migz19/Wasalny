@@ -27,7 +27,9 @@ private slots:
 
     void on_removeNodeButton_clicked();
     void on_removeEdgeButton_clicked();
+
     void on_addDirectedEdgeButton_clicked();
+
     void on_shortestPathButton_clicked();
 
     void on_exitButton_clicked();

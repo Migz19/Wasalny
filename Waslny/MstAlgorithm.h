@@ -45,7 +45,7 @@ public:
 
     void kruskal();
     void prim(edge source, int otherSourcesCnt);
-    vector<pair<pair<int, int>, int>> getPath(vector< vector<pair<int, int>> > adjList, vector< pair<bool, bool> >& edgeDirections, EdgeMapper& edgeMapper, int algorithmUsed);
+    vector<pair<pair<int, int>, int>> getPath(vector< vector<pair<int, int>> >& adjList, vector< pair<bool, bool> >& edgeDirections, EdgeMapper& edgeMapper, int algorithmUsed);
 
     void clr();
     ~MstAlgorithm();
