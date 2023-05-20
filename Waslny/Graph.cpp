@@ -183,9 +183,10 @@ void Graph::removeEdge(string node1, string node2, string edgeName)
 
 	if (!counter) // if nodes and edge exist but the edge doesn't connect those two
 		throw GraphException("Edge doesn't exist");
-	else {
+	else 
+	{
 		edgeMapper.remove(edgeId);
-		edgeDirections[edgeId].first = edgeDirections[edgeId].second=0;
+		edgeDirections[edgeId].first = edgeDirections[edgeId].second = 0;
 	}
 }
 
@@ -238,12 +239,15 @@ vector<string> Graph::display(int algorithmUsed)
 		int node1 = p.first.first;
 		int node2 = p.first.second;
 		int edge = p.second;
+		
 
 		if (node2 == -1 && edge == -1) // isolated node ( without edge )
 		{
+			
 			if (isDisplayed[node1])
 				continue;
-
+			
+		
 			if (nodeMapper.idExists(node1))
 				res.push_back(nodeMapper.getName(node1));
 
@@ -273,7 +277,6 @@ vector<string> Graph::display(int algorithmUsed)
 			res.push_back(s);
 		}
 	}
-
 	return res;
 }
 vector<string> Graph::getMST(int algorithmUsed)   

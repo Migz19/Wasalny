@@ -11,7 +11,9 @@
 #include"File.h"
 class MainWindow : public QMainWindow
 {
+
     Q_OBJECT
+    
 
 public:
     MainWindow(QWidget* parent = nullptr);
@@ -43,6 +45,11 @@ private slots:
 
 
 private:
+
+    bool isValidName(string name)
+    {
+        return !name.empty() && name.front() != ' ' && name.back() != ' ' && name.size() <= 30;
+    }
     QPalette backgroundPalette;
     QLabel* displayLabel;
     QPushButton* addNodeButton;

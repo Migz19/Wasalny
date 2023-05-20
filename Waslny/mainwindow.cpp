@@ -166,18 +166,25 @@ void MainWindow::on_addNodeButton_clicked()
 {
     QString nodeName = nodeNameLineEdit->text();
     string node = nodeName.toStdString();
-    try
+    if (!isValidName(node))
     {
-        graph->addNode(node);
-        displayLabel->setText("City added: " + nodeName);
-    }
-    catch (const GraphException& ex)
-    {
-        string msg = "The city already exists";
+        string msg = "Please, Enter valid city name";
         displayLabel->setText(QString::fromStdString(msg));
-
     }
+    else
+    {
+        try
+        {
+            graph->addNode(node);
+            displayLabel->setText("City added: " + nodeName);
+        }
+        catch (const GraphException& ex)
+        {
+            string msg = "The city already exists";
+            displayLabel->setText(QString::fromStdString(msg));
 
+        }
+    }
     nodeNameLineEdit->clear();
 }
 
@@ -262,16 +269,23 @@ void MainWindow::on_addDirectedEdgeButton_clicked()
     string to = toNode.toStdString();
     string edge = edgeName.toStdString();
     int dist = distance.toInt();
-
-    try
+    if (!isValidName(edge))
     {
-        graph->addDirectedEdge(from, to, edge, dist);
-        displayLabel->setText("Directed road added: " + edgeName + " (" + distance + " km)");
-    }
-    catch (const GraphException& ex)
-    {
-        string msg="can't add road";
+        string msg = "can't add road";
         displayLabel->setText(QString::fromStdString(msg));
+    }
+    else
+    {
+        try
+        {
+            graph->addDirectedEdge(from, to, edge, dist);
+            displayLabel->setText("Directed road added: " + edgeName + " (" + distance + " km)");
+        }
+        catch (const GraphException& ex)
+        {
+            string msg = "can't add road";
+            displayLabel->setText(QString::fromStdString(msg));
+        }
     }
     fromNodeLineEdit->clear();
     toNodeLineEdit->clear();

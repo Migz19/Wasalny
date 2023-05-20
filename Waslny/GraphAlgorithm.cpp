@@ -68,13 +68,12 @@ bool GraphAlgorithm::dfs(int start, int target, vector<vector<pair<int, int>>>& 
     return result;
 }
 
-void GraphAlgorithm::bfs(vector<int> sources, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v)
+void GraphAlgorithm::bfs(int source, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v)
 {
-    //multi source bfs  ===> faster 
 
     queue<int> q;
-    for (int i : sources)
-        q.push(i);
+    
+    q.push(source);
 
     while (!q.empty())
     {
@@ -96,12 +95,12 @@ void GraphAlgorithm::bfs(vector<int> sources, vector<vector<pair<int, int>>>& ad
     }
 }
 
-void GraphAlgorithm::dfs(vector<int> sources, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v)
+void GraphAlgorithm::dfs(int source, vector<vector<pair<int, int>>>& adjList, vector<pair<pair<int, int>, int>>& v)
 {
 
     stack<int> s;
-    for (int i : sources)
-        s.push(i);
+    
+    s.push(source);
 
     while (!s.empty())
     {
@@ -123,44 +122,38 @@ void GraphAlgorithm::dfs(vector<int> sources, vector<vector<pair<int, int>>>& ad
     }
 }
 
-void GraphAlgorithm::dfs(int node, vector<vector<pair<int, int>>>& adjList)
-{
-    visited[node] = true;
 
-    for (int i = 0; i < adjList[node].size(); i++)
-    {
-        if (!visited[adjList[node][i].first])
-        {
-            dfs(adjList[node][i].first, adjList);
-        }
-    }
-}
 
 vector<pair<pair<int, int>, int>> GraphAlgorithm::getConnections(vector<vector<pair<int, int>>>& adjList, int AlgorithmUsed)
 {
-    vector<int> sources, isolated;
-
-    for (int i = 1; i < adjList.size(); i++) /// adj size
+    vector<int> isolated;
+    vector<pair<pair<int, int>, int>> res;
+    
+    for (int node = 1; node < adjList.size(); node++) // adj size
     {
-        if (!visited[i] && !adjList[i].empty())
+        if (!adjList[node].empty())
         {
-            sources.push_back(i);
-            dfs(i, adjList);
+            for (pair<int, int> p : adjList[node])
+            {
+                int edge = p.second;
+                if (!visited[edge])
+                {
+                    if (AlgorithmUsed == 0)  // useDfs
+                        dfs(node, adjList, res);
+                    else                     // useBfs
+                        bfs(node, adjList, res);
+                }
+            }
         }
-        else if (adjList[i].empty())
+        else if (adjList[node].empty())
         {
-            isolated.push_back(i);
+            isolated.push_back(node);
         }
     }
 
-    clr();
-    vector<pair<pair<int, int>, int>> res;
 
-    if (AlgorithmUsed == 0)  // useDfs
-        dfs(sources, adjList, res);
-    else // useBfs
-        bfs(sources, adjList, res);
-
+    clr();//
+    
     for (int i : isolated)
     {
         res.push_back({ {i,-1}, -1 });

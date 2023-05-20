@@ -30,7 +30,7 @@ int Mapper::getId(string name)
 string Mapper::getName(int id)
 {
 	if (!idExists(id))
-		throw GraphException("node doesn't exist");
+		throw GraphException("id doesn't exist");
 
 	return idToString[id];
 }
@@ -38,7 +38,7 @@ string Mapper::getName(int id)
 void Mapper::remove(int id)
 {
 	if (!idExists(id))
-		throw GraphException("node doesn't exist");
+		throw GraphException("id doesn't exist");
 
 	freeIds.push_back(id);
 	string name = idToString[id];

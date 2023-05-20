@@ -22,7 +22,7 @@ private:
 
 	friend class File;//to access private data 
 	int sizeOfList;
-	vector< vector<pair<int, int>> > adjList;    // node -> {node,id of edge}
+	vector< vector< pair <int , int > > > adjList;    // node -> {node,id of edge}
 
 	vector< pair<bool, bool> > edgeDirections;	// directed or undirected O(1)
 

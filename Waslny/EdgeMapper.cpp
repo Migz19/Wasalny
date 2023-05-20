@@ -35,6 +35,7 @@ bool EdgeMapper::idExists(int id)
 EdgeMapper::~EdgeMapper()
 {
 	Mapper::~Mapper();
+	idToDistance.clear();
 }
 
 void EdgeMapper::remove(int id)

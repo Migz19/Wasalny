@@ -1,4 +1,22 @@
-a
-4
-ff
+Cairo
+1
+Alexandria
+2
+Sharqia
 3
+Sohag
+4
+Sinai
+5
+Tanta
+7
+Suez
+6
+Qina
+8
+Marsa Matrouh
+9
+Hurghada
+11
+Kafr ElSheikh
+10
