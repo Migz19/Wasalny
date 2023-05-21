@@ -29,9 +29,6 @@
     <QtUic Include="Wasalny.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <ClCompile Include="Wasalny.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -91,9 +88,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NodeMapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wasalny.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MstAlgorithm.h">

@@ -58,8 +58,6 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
 {
     vector<bool> vis(maxNodeID, 0);
 
-  //  set<int> nodes;
-
     priority_queue<edge> qu;
     qu.push(source);
 
@@ -72,9 +70,7 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
             continue;
 
         vis[e.node1] = 1;
-        /*nodes.insert(e.node1);
-        nodes.insert(e.node2);*/
-
+   
 
         if (!(e.node1 == source.node1 && e.node2 == source.node2 && e.distance == source.distance))
             totalDistance += e.distance, answer.push_back(e);
@@ -86,13 +82,6 @@ void MstAlgorithm::prim(edge source, int otherSourcesCnt)
                 qu.push(child);
         }
     }
-
-   // nodesCnt = nodes.size();
-  /*  if (nodesCnt - 1 != answer.size())
-    {
-        totalDistance = -1;
-        answer.clear();
-    }*/
 }
 
 vector<pair<pair<int, int>, int>> MstAlgorithm::getPath(vector<vector<pair<int, int>>>& adjList, vector<pair<bool, bool>>& edgeDirections, EdgeMapper& edgeMapper, int algorithmUsed)

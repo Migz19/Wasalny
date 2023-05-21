@@ -87,7 +87,6 @@
     <QtUic Include="Wasalny.ui" />
     <ClInclude Include="DisjointSet.h" />
     <ClInclude Include="MstAlgorithm.h" />
-    <ClInclude Include="Wasalny.h" />
     <ClCompile Include="DisjointSet.cpp" />
     <ClCompile Include="EdgeMapper.cpp" />
     <ClCompile Include="File.cpp" />
@@ -99,7 +98,6 @@
     <ClCompile Include="MstAlgorithm.cpp" />
     <ClCompile Include="NodeMapper.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Wasalny.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
