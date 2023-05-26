@@ -1,4 +1,4 @@
-# Mini Uber Console App with Simple GUI
+# Wasalny
 
 This is a console application written in C++ as a project for a data structures course. The app is based on graph theory and allows users to add or remove nodes and edges using a Mapper class that controls how data is displayed to the user and manages the IDs of nodes and edges. The app also includes several algorithms for calculating distances and paths between nodes, including Dijkstra's algorithm for finding the shortest path and minimum spanning tree, as well as BFS and DFS algorithms for displaying distances between nodes.
 
